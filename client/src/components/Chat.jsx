@@ -5,11 +5,10 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [socket, setSocket] = useState(null);
-  const PORT = 5000; // Ensure this matches the server's port
+  const backendURL = "wss://mychat-app-flnz.onrender.com/ws"; // WebSocket URL
 
   useEffect(() => {
-    const socketUrl = `ws://localhost:${PORT}`; // Use a fixed domain/IP for local development
-    const newSocket = new WebSocket(socketUrl);
+    const newSocket = new WebSocket(backendURL);
     setSocket(newSocket);
 
     newSocket.onopen = () => {
@@ -22,11 +21,9 @@ function Chat() {
 
     newSocket.onmessage = (event) => {
       try {
-        // Attempt to parse the message as JSON
         const receivedMessage = JSON.parse(event.data);
         setMessages((prevMessages) => [...prevMessages, receivedMessage]);
       } catch (error) {
-        // If parsing fails, treat the message as plain text
         console.error('Error parsing JSON:', error);
         setMessages((prevMessages) => [...prevMessages, { content: event.data, sender: 'AI', avatar: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.disneyplusinformer.com%2Fwp-content%2Fuploads%2F2021%2F06%2FLuca-Profile-Avatars-3.png&f=1&nofb=1&ipt=192bf984412fe3008666d7ec2b22afb8863d893ea61f5d1f4db93c3c66182b92&ipo=images' }]);
       }
@@ -80,7 +77,7 @@ function Chat() {
               </Avatar>
             )}
             {message.sender !== 'Jessica' && (
-              <div className="flex justify-end items-center space-x-2"> {/* Updated this line */}
+              <div className="flex justify-end items-center space-x-2">
                 <div className={`max-w-md rounded-full py-2 px-4 text-white ${message.sender === 'Jessica' ? 'bg-blue-500' : 'bg-green-500'} rounded-full`}>
                   {message.content}
                 </div>
@@ -89,7 +86,6 @@ function Chat() {
                 </Avatar>
               </div>
             )}
-            {/* Move the sender's message outside of the conditional rendering */}
             {message.sender === 'Jessica' && (
               <div className={`max-w-md ml-2  rounded-full py-2 px-4 text-white ${message.sender === 'Jessica' ? 'bg-blue-500' : 'bg-green-500'} rounded-full`}>
                 {message.content}
@@ -111,7 +107,6 @@ function Chat() {
       </div>
     </div>
   );
-  
 }
 
 export default Chat;
